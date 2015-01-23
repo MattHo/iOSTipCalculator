@@ -31,28 +31,18 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSMutableArray *tipValues = [NSMutableArray arrayWithObjects:@(10.0), @(15.0), @(20.0), nil];
+    NSArray *tipSettings = [defaults arrayForKey:@"tips"];
     
-    long tip1 = [defaults integerForKey:@"tip1"];
-    long tip2 = [defaults integerForKey:@"tip2"];
-    long tip3 = [defaults integerForKey:@"tip3"];
-    
-    if (tip1) {
-        self.tip1TextField.text = [NSString stringWithFormat:@"%li", tip1];
-    } else {
-        self.tip1TextField.text = @"10";
+    for (int i = 0; i < tipValues.count; i++) {
+        if (tipSettings[i] != nil) {
+            [tipValues replaceObjectAtIndex:i withObject:tipSettings[i]];
+        }
     }
 
-    if (tip2) {
-        self.tip2TextField.text = [NSString stringWithFormat:@"%li", tip2];
-    } else {
-        self.tip2TextField.text = @"15";
-    }
-
-    if (tip3) {
-        self.tip3TextField.text = [NSString stringWithFormat:@"%li", tip3];
-    } else {
-        self.tip3TextField.text = @"20";
-    }
+    self.tip1TextField.text = [NSString stringWithFormat:@"%li", [[tipValues objectAtIndex:0] integerValue]];
+    self.tip2TextField.text = [NSString stringWithFormat:@"%li", [[tipValues objectAtIndex:1] integerValue]];
+    self.tip3TextField.text = [NSString stringWithFormat:@"%li", [[tipValues objectAtIndex:2] integerValue]];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -67,22 +57,24 @@
 
 - (void)updateSettings {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSMutableArray *tipValues = [NSMutableArray arrayWithObjects:@(10.0), @(15.0), @(20.0), nil];
     float tip1 = [self.tip1TextField.text floatValue];
     float tip2 = [self.tip2TextField.text floatValue];
     float tip3 = [self.tip3TextField.text floatValue];
     
     if (tip1) {
-        [defaults setFloat:tip1 forKey:@"tip1"];
+        [tipValues replaceObjectAtIndex:0 withObject:[NSNumber numberWithFloat:tip1]];
     }
     
     if (tip2) {
-        [defaults setFloat:tip2 forKey:@"tip2"];
+        [tipValues replaceObjectAtIndex:1 withObject:[NSNumber numberWithFloat:tip2]];
     }
     
     if (tip3) {
-        [defaults setFloat:tip3 forKey:@"tip3"];
+        [tipValues replaceObjectAtIndex:2 withObject:[NSNumber numberWithFloat:tip3]];
     }
-    
+
+    [defaults setObject:tipValues forKey:@"tips"];
     [defaults synchronize];
 }
 

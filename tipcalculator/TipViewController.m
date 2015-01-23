@@ -65,37 +65,20 @@
 }
 
 - (void)updateValues {
-    float billAmount = [self.billTextField.text floatValue];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    // NSArray *tipValues = @[@(0.1), @(0.15), @(0.2)];
-    // float tipAmount = billAmount * [tipValues[self.tipControl.selectedSegmentIndex] floatValue];
+    NSMutableArray *tipValues = [NSMutableArray arrayWithObjects:@(10.0), @(15.0), @(20.0), nil];
+    NSArray *tipSettings = [defaults arrayForKey:@"tips"];
+    float billAmount = [self.billTextField.text floatValue];
+    
+    for (int i = 0; i < tipValues.count; i++) {
+        if (tipSettings[i] != nil) {
+            [tipValues replaceObjectAtIndex:i withObject:tipSettings[i]];
+        }
 
-    long tip1 = [defaults integerForKey:@"tip1"];
-    long tip2 = [defaults integerForKey:@"tip2"];
-    long tip3 = [defaults integerForKey:@"tip3"];
+        [self.tipControl setTitle:[NSString stringWithFormat:@"%li%%",[tipValues[i] longValue]] forSegmentAtIndex:i];
+    }
 
-    if (tip1) {
-        [self.tipControl setTitle:[NSString stringWithFormat:@"%li%%",tip1] forSegmentAtIndex:0];
-    } else {
-        tip1 = 10;
-    }
-    
-    if (tip2) {
-        [self.tipControl setTitle:[NSString stringWithFormat:@"%li%%",tip2] forSegmentAtIndex:1];
-    } else {
-        tip2 = 15;
-    }
-    
-    if (tip3) {
-        [self.tipControl setTitle:[NSString stringWithFormat:@"%li%%",tip3] forSegmentAtIndex:2];
-    } else {
-        tip3 = 20;
-    }
-    
-    NSArray *tipSettings = @[[NSNumber numberWithFloat:(float)tip1/100],[NSNumber numberWithFloat:(float)tip2/100], [NSNumber numberWithFloat:(float)tip3/100]];
-    
-    float tipAmount = billAmount * [tipSettings[self.tipControl.selectedSegmentIndex] floatValue];
-    
+    float tipAmount = billAmount * [tipValues[self.tipControl.selectedSegmentIndex] longValue] / 100;
     float totalAmount = billAmount + tipAmount;
     
     self.tipLabel.text = [NSString stringWithFormat:@"$%0.2f", tipAmount];
